@@ -47,7 +47,23 @@
         - libapache2-mod-php
       state: latest
     when: ansible_distribution == "Debian"
+  
+  - name: change KeepAliveTimeout to 6s (Debian)
+    tags: apache,debian,apache2
+    lineinfile:
+      path: /etc/apache2/apache2.conf
+      regexp: '^KeepAliveTimeout'
+      line: 'KeepAliveTimeout 6'
+    when: ansible_distribution == "Debian"
+    register: apache2
 
+  - name: restart apache2 (Debian)
+    tags: apache,apache2,debian
+    service:
+      name: apache2
+      state: restarted
+    when: apache2.changed
+   
   - name: install apache and php package (CentOS)
     tags: apache,httpd,centos
     dnf:
@@ -55,6 +71,13 @@
         - httpd
         - php
       state: latest
+    when: ansible_distribution == "CentOS"
+  
+  - name: start httpd (CentOS)
+    tags: apache,centos,httpd
+    service:
+      name: httpd
+      state: started
     when: ansible_distribution == "CentOS"
 
   - name: copy default html file for site
