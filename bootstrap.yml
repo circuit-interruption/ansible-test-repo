@@ -1,0 +1,43 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates (CentOS)
+    tags: always
+    dnf:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "CentOS"
+
+  - name: install updates (Debian)
+    tags: always
+    apt:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "Debian"
+
+- hosts: all
+  become: true
+  tasks: 
+
+  - name: create kronos user
+    tags: always
+    user:
+      name: kronos
+      groups: root    
+
+  - name: add ssh key for kronos
+    tags: always
+    authorized_key:
+      user: kronos
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILh0Rsk/BAW8ZrXCHHE/5ytykUpWeYcs6+VK2godNIv0 ansible - for actually running ansible shit"
+
+  - name: add sudoers file for kronos
+    tags: always
+    copy:
+      src: sudoer_kronos
+      dest: /etc/sudoers.d/kronos
+      owner: root
+      group: root
