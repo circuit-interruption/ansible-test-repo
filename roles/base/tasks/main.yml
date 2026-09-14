@@ -1,0 +1,4 @@
+- name: add ssh key for kronos
+  authorized_key:
+    user: kronos
+    key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILh0Rsk/BAW8ZrXCHHE/5ytykUpWeYcs6+VK2godNIv0 ansible - for actually running ansible shit"
